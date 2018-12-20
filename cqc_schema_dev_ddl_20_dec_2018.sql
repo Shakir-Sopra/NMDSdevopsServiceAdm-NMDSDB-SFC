@@ -764,3 +764,44 @@ GRANT SELECT,USAGE ON SEQUENCE cqc.log_id_seq TO sfcadmin;
 -- PostgreSQL database dump complete
 --
 
+----Insert From Warren
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (1, 7, 1, "Number of people receiving care on the completion date");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (2, 9, 1, "How many beds do you currently have?");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (3, 9, 2, "How many of those beds are currently used?");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (4, 10, 1, "How many places do you currently have?");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (5, 10, 2, "Number of people using the service on the completion date");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (6, 11, 1, "Number of people receiving care on the completion date");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (7, 12, 1, "Number of people receiving care on the completion date");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (8, 20, 1, "How many places do you currently have?");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (9, 20, 2, "Number of people using the service on the completion date");
+
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (10, 21, 1, "Number of people using the service on the completion date");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (11, 22, 1, "Number of people receiving care on the completion date");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (12, 24, 1, "How many beds do you currently have?");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (13, 24, 2, "How many of those beds are currently used?");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (14, 25, 1, "How many beds do you currently have?");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (15, 25, 2, "How many of those beds are currently used?");
+INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (16, 35, 1, "Number of people receiving care on the completion date");
+---------------------
+
+insert into cqc."Job" ("JobID", "JobName") values (1, 'Senior Care Worker');
+insert into cqc."Job" ("JobID", "JobName") values (2, 'Care Worker');
+insert into cqc."Job" ("JobID", "JobName") values (3, 'Community Support and Outreach Work');
+insert into cqc."Job" ("JobID", "JobName") values (4, 'Advice Guidance and Advocacy');
+insert into cqc."Job" ("JobID", "JobName") values (5, 'Other care-providing job role');
+insert into cqc."Job" ("JobID", "JobName") values (6, 'Senior Management');
+insert into cqc."Job" ("JobID", "JobName") values (7, 'Middle Management');
+insert into cqc."Job" ("JobID", "JobName") values (8, 'First Line Manager');
+insert into cqc."Job" ("JobID", "JobName") values (9, 'Registered Manager');
+insert into cqc."Job" ("JobID", "JobName") values (10, 'Supervisor');
+insert into cqc."Job" ("JobID", "JobName") values (11, 'Managers and staff in care-related but not care-providing roles');
+insert into cqc."Job" ("JobID", "JobName") values (12, 'Social Worker');
+insert into cqc."Job" ("JobID", "JobName") values (13, 'Occupational Therapist');
+insert into cqc."Job" ("JobID", "JobName") values (14, 'Registered Nurse');
+insert into cqc."Job" ("JobID", "JobName") values (15, 'Allied Health Professional');
+insert into cqc."Job" ("JobID", "JobName") values (16, 'Safeguarding and reviewing officer');
+insert into cqc."Job" ("JobID", "JobName") values (17, 'Administrative or office staff not care-providing');
+insert into cqc."Job" ("JobID", "JobName") values (18, 'Ancillary staff not care-providing');
+insert into cqc."Job" ("JobID", "JobName") values (19, 'Activities worker or co-ordinator');
+insert into cqc."Job" ("JobID", "JobName") values (20, 'Occupational therapist assistant');
+insert into cqc."Job" ("JobID", "JobName") values (21, 'Other non-care-providing job roles');
