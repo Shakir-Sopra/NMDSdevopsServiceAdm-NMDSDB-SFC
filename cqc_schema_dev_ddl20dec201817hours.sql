@@ -37,6 +37,19 @@ CREATE TYPE cqc.est_employertype_enum AS ENUM (
 
 ALTER TYPE cqc.est_employertype_enum OWNER TO postgres;
 
+--
+-- Name: job_type; Type: TYPE; Schema: cqc; Owner: postgres
+--
+
+CREATE TYPE cqc.job_type AS ENUM (
+    'Vacancies',
+    'Starters',
+    'Leavers'
+);
+
+
+ALTER TYPE cqc.job_type OWNER TO postgres;
+
 SET default_tablespace = sfcdevtbs_logins;
 
 SET default_with_oids = false;
@@ -71,7 +84,8 @@ CREATE TABLE cqc."Establishment" (
     "EmployerType" cqc.est_employertype_enum,
     "ShareDataWithCQC" boolean DEFAULT false,
     "ShareDataWithLA" boolean DEFAULT false,
-    "ShareData" boolean DEFAULT false
+    "ShareData" boolean DEFAULT false,
+    "NumberOfStaff" integer
 );
 
 
@@ -121,18 +135,19 @@ ALTER SEQUENCE cqc."EstablishmentCapacity_EstablishmentCapacityID_seq" OWNED BY 
 
 CREATE TABLE cqc."EstablishmentJobs" (
     "JobID" integer NOT NULL,
-    "EstablishmentID" integer,
-    "EstablishmentJobID" integer
+    "EstablishmentID" integer NOT NULL,
+    "EstablishmentJobID" integer NOT NULL,
+    "JobType" cqc.job_type NOT NULL
 );
 
 
 ALTER TABLE cqc."EstablishmentJobs" OWNER TO sfcadmin;
 
 --
--- Name: EstablishmentJobs_JobID_seq; Type: SEQUENCE; Schema: cqc; Owner: sfcadmin
+-- Name: EstablishmentJobs_EstablishmentJobID_seq; Type: SEQUENCE; Schema: cqc; Owner: sfcadmin
 --
 
-CREATE SEQUENCE cqc."EstablishmentJobs_JobID_seq"
+CREATE SEQUENCE cqc."EstablishmentJobs_EstablishmentJobID_seq"
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -141,27 +156,49 @@ CREATE SEQUENCE cqc."EstablishmentJobs_JobID_seq"
     CACHE 1;
 
 
-ALTER TABLE cqc."EstablishmentJobs_JobID_seq" OWNER TO sfcadmin;
+ALTER TABLE cqc."EstablishmentJobs_EstablishmentJobID_seq" OWNER TO sfcadmin;
 
 --
--- Name: EstablishmentJobs_JobID_seq; Type: SEQUENCE OWNED BY; Schema: cqc; Owner: sfcadmin
+-- Name: EstablishmentJobs_EstablishmentJobID_seq; Type: SEQUENCE OWNED BY; Schema: cqc; Owner: sfcadmin
 --
 
-ALTER SEQUENCE cqc."EstablishmentJobs_JobID_seq" OWNED BY cqc."EstablishmentJobs"."JobID";
+ALTER SEQUENCE cqc."EstablishmentJobs_EstablishmentJobID_seq" OWNED BY cqc."EstablishmentJobs"."EstablishmentJobID";
 
 
 --
--- Name: EstablishmentLocalAuthority; Type: TABLE; Schema: cqc; Owner: sfcadmin
+-- Name: EstablishmentLocalAuthority; Type: TABLE; Schema: cqc; Owner: postgres
 --
 
 CREATE TABLE cqc."EstablishmentLocalAuthority" (
-    "EstablishmentID" integer,
-    "EstbLaID" integer,
+    "EstablishmentID" integer NOT NULL,
+    "EstablishmentLocalAuthority" integer NOT NULL,
     "LocalCustodianCode" integer
 );
 
 
-ALTER TABLE cqc."EstablishmentLocalAuthority" OWNER TO sfcadmin;
+ALTER TABLE cqc."EstablishmentLocalAuthority" OWNER TO postgres;
+
+--
+-- Name: EstablishmentLocalAuthority_EstablishmentID_seq; Type: SEQUENCE; Schema: cqc; Owner: postgres
+--
+
+CREATE SEQUENCE cqc."EstablishmentLocalAuthority_EstablishmentID_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cqc."EstablishmentLocalAuthority_EstablishmentID_seq" OWNER TO postgres;
+
+--
+-- Name: EstablishmentLocalAuthority_EstablishmentID_seq; Type: SEQUENCE OWNED BY; Schema: cqc; Owner: postgres
+--
+
+ALTER SEQUENCE cqc."EstablishmentLocalAuthority_EstablishmentID_seq" OWNED BY cqc."EstablishmentLocalAuthority"."EstablishmentID";
+
 
 --
 -- Name: EstablishmentServices; Type: TABLE; Schema: cqc; Owner: sfcadmin
@@ -210,11 +247,11 @@ CREATE TABLE cqc."Job" (
 ALTER TABLE cqc."Job" OWNER TO sfcadmin;
 
 --
--- Name: LocalAuthority ; Type: TABLE; Schema: cqc; Owner: sfcadmin
+-- Name: LocalAuthority; Type: TABLE; Schema: cqc; Owner: sfcadmin
 --
 
-CREATE TABLE cqc."LocalAuthority " (
-    "LocalCustodianCode" integer,
+CREATE TABLE cqc."LocalAuthority" (
+    "LocalCustodianCode" integer NOT NULL,
     "LocalAuthorityName" text
 );
 
@@ -477,10 +514,17 @@ ALTER TABLE ONLY cqc."EstablishmentCapacity" ALTER COLUMN "EstablishmentCapacity
 
 
 --
--- Name: EstablishmentJobs JobID; Type: DEFAULT; Schema: cqc; Owner: sfcadmin
+-- Name: EstablishmentJobs EstablishmentJobID; Type: DEFAULT; Schema: cqc; Owner: sfcadmin
 --
 
-ALTER TABLE ONLY cqc."EstablishmentJobs" ALTER COLUMN "JobID" SET DEFAULT nextval('cqc."EstablishmentJobs_JobID_seq"'::regclass);
+ALTER TABLE ONLY cqc."EstablishmentJobs" ALTER COLUMN "EstablishmentJobID" SET DEFAULT nextval('cqc."EstablishmentJobs_EstablishmentJobID_seq"'::regclass);
+
+
+--
+-- Name: EstablishmentLocalAuthority EstablishmentID; Type: DEFAULT; Schema: cqc; Owner: postgres
+--
+
+ALTER TABLE ONLY cqc."EstablishmentLocalAuthority" ALTER COLUMN "EstablishmentID" SET DEFAULT nextval('cqc."EstablishmentLocalAuthority_EstablishmentID_seq"'::regclass);
 
 
 --
@@ -527,7 +571,7 @@ ALTER TABLE ONLY cqc."EstablishmentCapacity"
 --
 
 ALTER TABLE ONLY cqc."EstablishmentJobs"
-    ADD CONSTRAINT "EstablishmentJobs_pkey" PRIMARY KEY ("JobID");
+    ADD CONSTRAINT "EstablishmentJobs_pkey" PRIMARY KEY ("EstablishmentJobID");
 
 
 --
@@ -568,6 +612,38 @@ ALTER TABLE ONLY cqc."EstablishmentServices"
 
 ALTER TABLE ONLY cqc."ServicesCapacity"
     ADD CONSTRAINT "ServicesCapacity_pkey" PRIMARY KEY ("ServiceCapacityID");
+
+
+--
+-- Name: EstablishmentLocalAuthority establishmentlocalauthority_pk; Type: CONSTRAINT; Schema: cqc; Owner: postgres
+--
+
+ALTER TABLE ONLY cqc."EstablishmentLocalAuthority"
+    ADD CONSTRAINT establishmentlocalauthority_pk PRIMARY KEY ("EstablishmentLocalAuthority");
+
+
+--
+-- Name: EstablishmentLocalAuthority establishmentlocalauthority_unq; Type: CONSTRAINT; Schema: cqc; Owner: postgres
+--
+
+ALTER TABLE ONLY cqc."EstablishmentLocalAuthority"
+    ADD CONSTRAINT establishmentlocalauthority_unq UNIQUE ("EstablishmentLocalAuthority");
+
+
+--
+-- Name: LocalAuthority localcustodiancode_pk; Type: CONSTRAINT; Schema: cqc; Owner: sfcadmin
+--
+
+ALTER TABLE ONLY cqc."LocalAuthority"
+    ADD CONSTRAINT localcustodiancode_pk PRIMARY KEY ("LocalCustodianCode");
+
+
+--
+-- Name: LocalAuthority localcustodiancode_unq; Type: CONSTRAINT; Schema: cqc; Owner: sfcadmin
+--
+
+ALTER TABLE ONLY cqc."LocalAuthority"
+    ADD CONSTRAINT localcustodiancode_unq UNIQUE ("LocalCustodianCode");
 
 
 --
@@ -700,6 +776,22 @@ ALTER TABLE ONLY cqc."Login"
 
 
 --
+-- Name: EstablishmentJobs establishment_establishmentjobs_fk; Type: FK CONSTRAINT; Schema: cqc; Owner: sfcadmin
+--
+
+ALTER TABLE ONLY cqc."EstablishmentJobs"
+    ADD CONSTRAINT establishment_establishmentjobs_fk FOREIGN KEY ("EstablishmentID") REFERENCES cqc."Establishment"("EstablishmentID");
+
+
+--
+-- Name: EstablishmentLocalAuthority establishment_establishmentlocalauthority_fk; Type: FK CONSTRAINT; Schema: cqc; Owner: postgres
+--
+
+ALTER TABLE ONLY cqc."EstablishmentLocalAuthority"
+    ADD CONSTRAINT establishment_establishmentlocalauthority_fk FOREIGN KEY ("EstablishmentID") REFERENCES cqc."Establishment"("EstablishmentID");
+
+
+--
 -- Name: Establishment estloc_fk; Type: FK CONSTRAINT; Schema: cqc; Owner: sfcadmin
 --
 
@@ -721,6 +813,22 @@ ALTER TABLE ONLY cqc."EstablishmentServices"
 
 ALTER TABLE ONLY cqc."EstablishmentServices"
     ADD CONSTRAINT estsrvc_services_fk FOREIGN KEY ("ServiceID") REFERENCES cqc.services(id);
+
+
+--
+-- Name: EstablishmentJobs jobs_establishmentjobs_fk; Type: FK CONSTRAINT; Schema: cqc; Owner: sfcadmin
+--
+
+ALTER TABLE ONLY cqc."EstablishmentJobs"
+    ADD CONSTRAINT jobs_establishmentjobs_fk FOREIGN KEY ("JobID") REFERENCES cqc."Job"("JobID");
+
+
+--
+-- Name: EstablishmentLocalAuthority localauthrity_establishmentlocalauthority_fk; Type: FK CONSTRAINT; Schema: cqc; Owner: postgres
+--
+
+ALTER TABLE ONLY cqc."EstablishmentLocalAuthority"
+    ADD CONSTRAINT localauthrity_establishmentlocalauthority_fk FOREIGN KEY ("LocalCustodianCode") REFERENCES cqc."LocalAuthority"("LocalCustodianCode");
 
 
 --
@@ -763,6 +871,11 @@ GRANT SELECT,USAGE ON SEQUENCE cqc.log_id_seq TO sfcadmin;
 --
 -- PostgreSQL database dump complete
 --
+
+
+
+
+
 
 ----Insert From Warren
 INSERT INTO cqc."ServicesCapacity" ("ServiceCapacityID", "ServiceID", "Sequence", "Question") values (1, 7, 1, "Number of people receiving care on the completion date");
