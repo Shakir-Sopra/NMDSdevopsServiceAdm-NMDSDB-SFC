@@ -35,7 +35,7 @@ CREATE TYPE cqc.est_employertype_enum AS ENUM (
 );
 
 
-ALTER TYPE cqc.est_employertype_enum OWNER TO postgres;
+ALTER TYPE cqc.est_employertype_enum OWNER TO sfcadmin;
 
 --
 -- Name: job_type; Type: TYPE; Schema: cqc; Owner: postgres
@@ -48,7 +48,7 @@ CREATE TYPE cqc.job_type AS ENUM (
 );
 
 
-ALTER TYPE cqc.job_type OWNER TO postgres;
+ALTER TYPE cqc.job_type OWNER TO sfcadmin;
 
 SET default_tablespace = sfcdevtbs_logins;
 
@@ -67,7 +67,7 @@ CREATE TABLE cqc."CqcLog" (
 );
 
 
-ALTER TABLE cqc."CqcLog" OWNER TO postgres;
+ALTER TABLE cqc."CqcLog" OWNER TO sfcadmin;
 
 --
 -- Name: Establishment; Type: TABLE; Schema: cqc; Owner: sfcadmin; Tablespace: sfcdevtbs_logins
@@ -105,7 +105,7 @@ CREATE TABLE cqc."EstablishmentCapacity" (
 );
 
 
-ALTER TABLE cqc."EstablishmentCapacity" OWNER TO postgres;
+ALTER TABLE cqc."EstablishmentCapacity" OWNER TO sfcadmin;
 
 --
 -- Name: EstablishmentCapacity_EstablishmentCapacityID_seq; Type: SEQUENCE; Schema: cqc; Owner: postgres
@@ -120,7 +120,7 @@ CREATE SEQUENCE cqc."EstablishmentCapacity_EstablishmentCapacityID_seq"
     CACHE 1;
 
 
-ALTER TABLE cqc."EstablishmentCapacity_EstablishmentCapacityID_seq" OWNER TO postgres;
+ALTER TABLE cqc."EstablishmentCapacity_EstablishmentCapacityID_seq" OWNER TO sfcadmin;
 
 --
 -- Name: EstablishmentCapacity_EstablishmentCapacityID_seq; Type: SEQUENCE OWNED BY; Schema: cqc; Owner: postgres
@@ -176,7 +176,7 @@ CREATE TABLE cqc."EstablishmentLocalAuthority" (
 );
 
 
-ALTER TABLE cqc."EstablishmentLocalAuthority" OWNER TO postgres;
+ALTER TABLE cqc."EstablishmentLocalAuthority" OWNER TO sfcadmin;
 
 --
 -- Name: EstablishmentLocalAuthority_EstablishmentID_seq; Type: SEQUENCE; Schema: cqc; Owner: postgres
@@ -191,7 +191,7 @@ CREATE SEQUENCE cqc."EstablishmentLocalAuthority_EstablishmentID_seq"
     CACHE 1;
 
 
-ALTER TABLE cqc."EstablishmentLocalAuthority_EstablishmentID_seq" OWNER TO postgres;
+ALTER TABLE cqc."EstablishmentLocalAuthority_EstablishmentID_seq" OWNER TO sfcadmin;
 
 --
 -- Name: EstablishmentLocalAuthority_EstablishmentID_seq; Type: SEQUENCE OWNED BY; Schema: cqc; Owner: postgres
@@ -374,7 +374,7 @@ CREATE SEQUENCE cqc.cqclog_id_seq
     CACHE 1;
 
 
-ALTER TABLE cqc.cqclog_id_seq OWNER TO postgres;
+ALTER TABLE cqc.cqclog_id_seq OWNER TO sfcadmin;
 
 --
 -- Name: cqclog_id_seq; Type: SEQUENCE OWNED BY; Schema: cqc; Owner: postgres
@@ -431,7 +431,7 @@ CREATE SEQUENCE cqc.log_id_seq
     CACHE 1;
 
 
-ALTER TABLE cqc.log_id_seq OWNER TO postgres;
+ALTER TABLE cqc.log_id_seq OWNER TO sfcadmin;
 
 --
 -- Name: pcodedata; Type: TABLE; Schema: cqc; Owner: sfcadmin; Tablespace: sfcdevtbs_logins
