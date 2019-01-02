@@ -90,6 +90,9 @@ CREATE TABLE IF NOT EXISTS cqc."Establishment" (
 
 
 ALTER TABLE cqc."Establishment" OWNER TO sfcadmin;
+ALTER TABLE ONLY cqc."Establishment"
+    ADD CONSTRAINT unqestbid UNIQUE ("EstablishmentID");
+
 
 --SET default_tablespace = '';
 
@@ -165,25 +168,39 @@ ALTER TABLE cqc."EstablishmentJobs_EstablishmentJobID_seq" OWNER TO sfcadmin;
 
 ALTER SEQUENCE IF EXISTS cqc."EstablishmentJobs_EstablishmentJobID_seq" OWNED BY cqc."EstablishmentJobs"."EstablishmentJobID";
 
-
 --
--- Name: EstablishmentLocalAuthority; Type: TABLE; Schema: cqc; Owner: postgres
+-- Name: LocalAuthority; Type: TABLE; Schema: cqc; Owner: sfcadmin
 --
 
-CREATE TABLE IF NOT EXISTS cqc."EstablishmentLocalAuthority" (
-    "EstablishmentID" integer NOT NULL,
-    "EstablishmentLocalAuthority" integer NOT NULL,
-    "LocalCustodianCode" integer
+CREATE TABLE IF NOT EXISTS cqc."LocalAuthority" (
+    "LocalCustodianCode" integer NOT NULL,
+    "LocalAuthorityName" text
 );
 
 
-ALTER TABLE cqc."EstablishmentLocalAuthority" OWNER TO sfcadmin;
+ALTER TABLE cqc."LocalAuthority" OWNER TO sfcadmin;
 
 --
--- Name: EstablishmentLocalAuthority_EstablishmentID_seq; Type: SEQUENCE; Schema: cqc; Owner: postgres
+-- Name: LocalAuthority localcustodiancode_pk; Type: CONSTRAINT; Schema: cqc; Owner: sfcadmin
 --
 
-CREATE SEQUENCE IF NOT EXISTS cqc."EstablishmentLocalAuthority_EstablishmentID_seq"
+ALTER TABLE ONLY cqc."LocalAuthority"
+    ADD CONSTRAINT localcustodiancode_pk PRIMARY KEY ("LocalCustodianCode");
+
+
+--
+-- Name: LocalAuthority localcustodiancode_unq; Type: CONSTRAINT; Schema: cqc; Owner: sfcadmin
+--
+
+ALTER TABLE ONLY cqc."LocalAuthority"
+    ADD CONSTRAINT localcustodiancode_unq UNIQUE ("LocalCustodianCode");
+
+
+--
+-- Name: EstablishmentLocalAuthority_EstablishmentLocalAuthorityID_seq; Type: SEQUENCE; Schema: cqc; Owner: postgres
+--
+
+CREATE SEQUENCE IF NOT EXISTS cqc."EstablishmentLocalAuthority_EstablishmentLocalAuthorityID_seq"
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -192,13 +209,32 @@ CREATE SEQUENCE IF NOT EXISTS cqc."EstablishmentLocalAuthority_EstablishmentID_s
     CACHE 1;
 
 
-ALTER TABLE cqc."EstablishmentLocalAuthority_EstablishmentID_seq" OWNER TO sfcadmin;
-
 --
--- Name: EstablishmentLocalAuthority_EstablishmentID_seq; Type: SEQUENCE OWNED BY; Schema: cqc; Owner: postgres
+-- Name: EstablishmentLocalAuthority; Type: TABLE; Schema: cqc; Owner: postgres
 --
 
-ALTER SEQUENCE IF EXISTS cqc."EstablishmentLocalAuthority_EstablishmentID_seq" OWNED BY cqc."EstablishmentLocalAuthority"."EstablishmentID";
+CREATE TABLE IF NOT EXISTS cqc."EstablishmentLocalAuthority" (
+    "EstablishmentLocalAuthorityID" integer NOT NULL DEFAULT nextval('cqc."EstablishmentLocalAuthority_EstablishmentLocalAuthorityID_seq"'::regclass),
+    "EstablishmentID" integer NOT NULL,
+    "LocalCustodianCode" integer,
+	CONSTRAINT establishmentlocalauthority_pk PRIMARY KEY ("EstablishmentLocalAuthorityID"),
+    CONSTRAINT "EstablishmentLocalAuthorityID_Unq" UNIQUE ("EstablishmentLocalAuthorityID"),
+    CONSTRAINT establishment_establishmentlocalauthority_fk FOREIGN KEY ("EstablishmentID")
+        REFERENCES cqc."Establishment" ("EstablishmentID") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT localauthrity_establishmentlocalauthority_fk FOREIGN KEY ("LocalCustodianCode")
+        REFERENCES cqc."LocalAuthority" ("LocalCustodianCode") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+);
+
+
+ALTER TABLE cqc."EstablishmentLocalAuthority" OWNER TO sfcadmin;
+
+ALTER TABLE cqc."EstablishmentLocalAuthority_EstablishmentLocalAuthorityID_seq" OWNER TO sfcadmin;
+ALTER SEQUENCE IF EXISTS cqc."EstablishmentLocalAuthority_EstablishmentLocalAuthorityID_seq" OWNED BY cqc."EstablishmentLocalAuthority"."EstablishmentLocalAuthorityID";
+
 
 
 --
@@ -247,17 +283,6 @@ CREATE TABLE IF NOT EXISTS cqc."Job" (
 
 ALTER TABLE cqc."Job" OWNER TO sfcadmin;
 
---
--- Name: LocalAuthority; Type: TABLE; Schema: cqc; Owner: sfcadmin
---
-
-CREATE TABLE IF NOT EXISTS cqc."LocalAuthority" (
-    "LocalCustodianCode" integer NOT NULL,
-    "LocalAuthorityName" text
-);
-
-
-ALTER TABLE cqc."LocalAuthority" OWNER TO sfcadmin;
 
 --SET default_tablespace = sfcdevtbs_logins;
 
@@ -506,12 +531,6 @@ ALTER TABLE ONLY cqc."EstablishmentCapacity" ALTER COLUMN "EstablishmentCapacity
 ALTER TABLE ONLY cqc."EstablishmentJobs" ALTER COLUMN "EstablishmentJobID" SET DEFAULT nextval('cqc."EstablishmentJobs_EstablishmentJobID_seq"'::regclass);
 
 
---
--- Name: EstablishmentLocalAuthority EstablishmentID; Type: DEFAULT; Schema: cqc; Owner: postgres
---
-
-ALTER TABLE ONLY cqc."EstablishmentLocalAuthority" ALTER COLUMN "EstablishmentID" SET DEFAULT nextval('cqc."EstablishmentLocalAuthority_EstablishmentID_seq"'::regclass);
-
 
 --
 -- Name: Login ID; Type: DEFAULT; Schema: cqc; Owner: sfcadmin
@@ -549,7 +568,7 @@ ALTER TABLE ONLY cqc."CqcLog"
 --
 
 ALTER TABLE ONLY cqc."EstablishmentCapacity"
-    ADD CONSTRAINT "EstablishmentCapacity_pkey1" PRIMARY KEY ("ServiceCapacityID");
+    ADD CONSTRAINT "EstablishmentCapacity_pkey1" PRIMARY KEY ("EstablishmentCapacityID");
 
 
 --
@@ -598,38 +617,6 @@ ALTER TABLE ONLY cqc."EstablishmentServices"
 
 ALTER TABLE ONLY cqc."ServicesCapacity"
     ADD CONSTRAINT "ServicesCapacity_pkey" PRIMARY KEY ("ServiceCapacityID");
-
-
---
--- Name: EstablishmentLocalAuthority establishmentlocalauthority_pk; Type: CONSTRAINT; Schema: cqc; Owner: postgres
---
-
-ALTER TABLE ONLY cqc."EstablishmentLocalAuthority"
-    ADD CONSTRAINT establishmentlocalauthority_pk PRIMARY KEY ("EstablishmentLocalAuthority");
-
-
---
--- Name: EstablishmentLocalAuthority establishmentlocalauthority_unq; Type: CONSTRAINT; Schema: cqc; Owner: postgres
---
-
-ALTER TABLE ONLY cqc."EstablishmentLocalAuthority"
-    ADD CONSTRAINT establishmentlocalauthority_unq UNIQUE ("EstablishmentLocalAuthority");
-
-
---
--- Name: LocalAuthority localcustodiancode_pk; Type: CONSTRAINT; Schema: cqc; Owner: sfcadmin
---
-
-ALTER TABLE ONLY cqc."LocalAuthority"
-    ADD CONSTRAINT localcustodiancode_pk PRIMARY KEY ("LocalCustodianCode");
-
-
---
--- Name: LocalAuthority localcustodiancode_unq; Type: CONSTRAINT; Schema: cqc; Owner: sfcadmin
---
-
-ALTER TABLE ONLY cqc."LocalAuthority"
-    ADD CONSTRAINT localcustodiancode_unq UNIQUE ("LocalCustodianCode");
 
 
 
@@ -690,12 +677,6 @@ ALTER TABLE ONLY cqc."User"
     ADD CONSTRAINT unq_userregistrationid UNIQUE ("RegistrationID");
 
 
---
--- Name: Establishment unqestbid; Type: CONSTRAINT; Schema: cqc; Owner: sfcadmin
---
-
-ALTER TABLE ONLY cqc."Establishment"
-    ADD CONSTRAINT unqestbid UNIQUE ("EstablishmentID");
 
 
 --
@@ -756,14 +737,6 @@ ALTER TABLE ONLY cqc."EstablishmentJobs"
 
 
 --
--- Name: EstablishmentLocalAuthority establishment_establishmentlocalauthority_fk; Type: FK CONSTRAINT; Schema: cqc; Owner: postgres
---
-
-ALTER TABLE ONLY cqc."EstablishmentLocalAuthority"
-    ADD CONSTRAINT establishment_establishmentlocalauthority_fk FOREIGN KEY ("EstablishmentID") REFERENCES cqc."Establishment"("EstablishmentID");
-
-
---
 -- Name: Establishment estloc_fk; Type: FK CONSTRAINT; Schema: cqc; Owner: sfcadmin
 --
 
@@ -795,13 +768,6 @@ ALTER TABLE ONLY cqc."EstablishmentJobs"
     ADD CONSTRAINT jobs_establishmentjobs_fk FOREIGN KEY ("JobID") REFERENCES cqc."Job"("JobID");
 
 
---
--- Name: EstablishmentLocalAuthority localauthrity_establishmentlocalauthority_fk; Type: FK CONSTRAINT; Schema: cqc; Owner: postgres
---
-
-ALTER TABLE ONLY cqc."EstablishmentLocalAuthority"
-    ADD CONSTRAINT localauthrity_establishmentlocalauthority_fk FOREIGN KEY ("LocalCustodianCode") REFERENCES cqc."LocalAuthority"("LocalCustodianCode");
-
 
 --
 -- Name: Establishment mainserviceid_fk; Type: FK CONSTRAINT; Schema: cqc; Owner: sfcadmin
@@ -832,6 +798,35 @@ GRANT ALL ON TABLE cqc."CqcLog" TO sfcadmin;
 
 GRANT SELECT,USAGE ON SEQUENCE cqc.cqclog_id_seq TO sfcadmin;
 
+
+--
+-- Name: Feedback
+--
+DROP SEQUENCE IF EXISTS cqc."Feedback_seq";
+CREATE SEQUENCE cqc."Feedback_seq";
+ALTER SEQUENCE cqc."Feedback_seq"
+    OWNER TO sfcadmin;
+
+    -- now table
+DROP TABLE IF EXISTS cqc."Feedback";
+CREATE TABLE cqc."Feedback"
+(
+    "FeedbackID" integer NOT NULL DEFAULT nextval('cqc."Feedback_seq"'::regclass),
+    "Doing" Text NOT NULL,
+    "Tellus" Text NOT NULL,
+    "Name" Text,
+    "Email" Text,
+    created timestamp NOT NULL DEFAULT NOW(),
+    CONSTRAINT feedback_pk PRIMARY KEY ("FeedbackID"),
+    CONSTRAINT feedback_unq UNIQUE ("FeedbackID")
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE cqc."Feedback"
+    OWNER to sfcadmin;
 
 
 --
